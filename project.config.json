@@ -41,6 +41,9 @@
       "disablePlugins": [],
       "outputPath": ""
     },
+    "useCompilerPlugins": [
+      "typescript"
+    ],
     "compileWorklet": false,
     "uglifyFileName": false,
     "uploadWithSourceMap": true,
