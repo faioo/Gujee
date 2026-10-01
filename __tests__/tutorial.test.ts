@@ -7,8 +7,9 @@ describe('tutorial metadata', () => {
     expect(tutorials.map((t) => t.id)).toEqual(['tut-1', 'tut-2', 'tut-3'])
   })
 
-  test('each tutorial has valid tips', () => {
+  test('each tutorial has valid tips and size <= 4', () => {
     for (const level of getTutorialLevels(LEVELS)) {
+      expect(level.size).toBeLessThanOrEqual(4)
       expect(level.tips && level.tips.length >= 1).toBe(true)
       for (const tip of level.tips ?? []) {
         expect(tip.text.length).toBeGreaterThan(0)
