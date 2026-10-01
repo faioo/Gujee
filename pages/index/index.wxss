@@ -1,0 +1,119 @@
+.page {
+  min-height: 100vh;
+  padding: 48rpx 40rpx 80rpx;
+  background:
+    radial-gradient(ellipse at 20% 0%, #ffe6d1 0%, transparent 55%),
+    radial-gradient(ellipse at 90% 10%, #ffd6e4 0%, transparent 45%),
+    linear-gradient(180deg, #fff8f0 0%, #ffe8d4 100%);
+}
+
+.hero {
+  position: relative;
+  padding: 80rpx 0 48rpx;
+  text-align: center;
+}
+
+.orb {
+  position: absolute;
+  left: 50%;
+  top: 24rpx;
+  width: 160rpx;
+  height: 160rpx;
+  margin-left: -80rpx;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #fff 0%, #f6b6c3 45%, #e07a3d 100%);
+  opacity: 0.85;
+  animation: floaty 3.2s ease-in-out infinite;
+}
+
+@keyframes floaty {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(12rpx);
+  }
+}
+
+.brand {
+  position: relative;
+  display: block;
+  font-size: 72rpx;
+  font-weight: 800;
+  letter-spacing: 6rpx;
+  color: #2c241b;
+  margin-top: 120rpx;
+}
+
+.brand-en {
+  position: relative;
+  display: block;
+  margin-top: 8rpx;
+  font-size: 28rpx;
+  letter-spacing: 6rpx;
+  color: #e07a3d;
+  font-weight: 600;
+  text-transform: none;
+}
+
+.tagline {
+  position: relative;
+  display: block;
+  margin-top: 24rpx;
+  font-size: 28rpx;
+  color: #7a6a5a;
+}
+
+.actions {
+  margin-top: 48rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.btn {
+  height: 96rpx;
+  border-radius: 999rpx;
+  font-size: 32rpx;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn.primary {
+  background: #e07a3d;
+  color: #fff;
+}
+
+.btn.ghost {
+  background: rgba(255, 255, 255, 0.7);
+  color: #2c241b;
+  border: 2rpx solid #f3c9a8;
+}
+
+.rules {
+  margin-top: 64rpx;
+  padding: 32rpx;
+  background: rgba(255, 255, 255, 0.72);
+  border-radius: 24rpx;
+}
+
+.rules-title {
+  display: block;
+  font-size: 26rpx;
+  font-weight: 700;
+  color: #e07a3d;
+  margin-bottom: 16rpx;
+}
+
+.rule {
+  display: block;
+  font-size: 26rpx;
+  color: #2c241b;
+  line-height: 1.7;
+  padding-left: 12rpx;
+  border-left: 4rpx solid #f3c9a8;
+  margin-bottom: 12rpx;
+}

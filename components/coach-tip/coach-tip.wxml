@@ -1,0 +1,4 @@
+<view class="tip" wx:if="{{text}}">
+  <text class="label">咕叽说</text>
+  <text class="body">{{text}}</text>
+</view>

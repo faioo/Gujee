@@ -1,0 +1,29 @@
+<view class="page">
+  <view class="top" wx:if="{{isTutorial}}">
+    <text class="skip" bindtap="onSkipTutorial">跳过教学</text>
+  </view>
+
+  <coach-tip wx:if="{{isTutorial}}" text="{{tipText}}"></coach-tip>
+
+  <view class="board-wrap">
+    <board
+      size="{{size}}"
+      regions="{{regions}}"
+      board="{{board}}"
+      colors="{{colors}}"
+      conflictMap="{{conflictMap}}"
+      highlight="{{highlight}}"
+      bind:celltap="onCellTap"
+    ></board>
+  </view>
+
+  <view class="toolbar">
+    <button class="tool" bindtap="onUndo">撤销</button>
+    <button class="tool" bindtap="onClear">清空</button>
+    <button class="tool" wx:if="{{!isTutorial}}" bindtap="onHint">提示</button>
+  </view>
+
+  <view class="hint-note" wx:if="{{hasHint}}">
+    <text>提示格已高亮</text>
+  </view>
+</view>

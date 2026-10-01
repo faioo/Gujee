@@ -1,0 +1,7 @@
+{
+  "usingComponents": {
+    "board": "/components/board/board",
+    "coach-tip": "/components/coach-tip/coach-tip"
+  },
+  "navigationBarTitleText": "游戏"
+}

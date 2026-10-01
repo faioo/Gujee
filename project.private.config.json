@@ -1,0 +1,7 @@
+{
+  "description": "本地私有配置，不提交敏感信息",
+  "projectname": "goojee",
+  "setting": {
+    "compileHotReLoad": true
+  }
+}

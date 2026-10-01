@@ -1,0 +1,20 @@
+<view class="page">
+  <view class="hero">
+    <view class="orb"></view>
+    <text class="brand">{{brand}}</text>
+    <text class="brand-en">{{brandEn}}</text>
+    <text class="tagline">彩色区域里，安放每一只咕叽</text>
+  </view>
+
+  <view class="actions">
+    <button class="btn primary" bindtap="goLevels">开始解谜</button>
+    <button class="btn ghost" bindtap="replayTutorial">重玩教学</button>
+  </view>
+
+  <view class="rules">
+    <text class="rules-title">三句话学会</text>
+    <text class="rule">每行、每列、每个色块各放 1 只咕叽</text>
+    <text class="rule">咕叽之间不能相邻（含斜角）</text>
+    <text class="rule">点格子：空 → × → 咕叽 → 空</text>
+  </view>
+</view>

@@ -1,0 +1,17 @@
+{
+  "name": "goojee",
+  "version": "1.0.0",
+  "description": "咕叽咕叽 / Goojee — Color region puzzle WeChat mini-program",
+  "private": true,
+  "scripts": {
+    "test": "jest",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.14",
+    "jest": "^29.7.0",
+    "miniprogram-api-typings": "^4.0.4",
+    "ts-jest": "^29.2.5",
+    "typescript": "^5.7.2"
+  }
+}

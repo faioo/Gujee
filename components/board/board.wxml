@@ -1,0 +1,20 @@
+<view class="board" style="--n: {{size}};">
+  <block wx:for="{{board}}" wx:for-item="row" wx:for-index="r" wx:key="r">
+    <view class="row">
+      <block wx:for="{{row}}" wx:for-item="cell" wx:for-index="c" wx:key="c">
+        <view
+          class="cell {{conflictMap[r + '-' + c] ? 'conflict' : ''}} {{highlight && highlight.r === r && highlight.c === c ? 'hl' : ''}}"
+          style="background: {{colors[regions[r][c]]}};"
+          data-r="{{r}}"
+          data-c="{{c}}"
+          bindtap="onCellTap"
+        >
+          <text wx:if="{{cell === 'mark'}}" class="sym mark">×</text>
+          <view wx:elif="{{cell === 'place'}}" class="sym place">
+            <view class="bird"></view>
+          </view>
+        </view>
+      </block>
+    </view>
+  </block>
+</view>

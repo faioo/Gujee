@@ -1,0 +1,32 @@
+page {
+  --bg: #fff8f0;
+  --ink: #2c241b;
+  --accent: #e07a3d;
+  --accent-soft: #f3c9a8;
+  --panel: #ffffff;
+  --muted: #7a6a5a;
+  --ok: #3d9a6a;
+  --danger: #d64545;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  box-sizing: border-box;
+}
+
+view,
+text,
+button {
+  box-sizing: border-box;
+}
+
+button {
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  border: none;
+  line-height: 1.4;
+}
+
+button::after {
+  border: none;
+}
