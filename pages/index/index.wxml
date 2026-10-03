@@ -17,4 +17,22 @@
     <text class="rule">咕叽之间不能相邻（含斜角）</text>
     <text class="rule">点格子：空 → × → 咕叽 → 空</text>
   </view>
+
+  <view class="settings">
+    <text class="settings-title">设置</text>
+    <view class="setting-row" wx:if="{{autoMarkUnlocked}}">
+      <view class="setting-copy">
+        <text class="setting-name">自动清死格</text>
+        <text class="setting-desc">放置后自动标 × 不可能的格子</text>
+      </view>
+      <switch checked="{{autoMarkDeadCells}}" color="#e07a3d" bindchange="onAutoMarkChange" />
+    </view>
+    <view class="setting-row locked" wx:else>
+      <view class="setting-copy">
+        <text class="setting-name">自动清死格</text>
+        <text class="setting-desc">成就或会员解锁后可开启</text>
+      </view>
+      <text class="lock-badge">未解锁</text>
+    </view>
+  </view>
 </view>

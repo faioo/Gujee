@@ -9,6 +9,8 @@ import {
   getForcedHint,
   isSolved,
 } from '../../utils/rules'
+import { canUseAutoMarkDeadCells } from '../../utils/features'
+import { loadSettings } from '../../utils/settings'
 import { createWxStorage, markLevelCompleted } from '../../utils/storage'
 import {
   findLevel,
@@ -46,6 +48,7 @@ Page({
     highlight: null as CellPos | null | Record<string, never>,
     tipIndex: 0,
     hasHint: false,
+    autoMarkEnabled: false,
   },
 
   level: null as Level | null,
@@ -60,6 +63,20 @@ Page({
       return
     }
     this.loadLevel(id)
+  },
+
+  onShow() {
+    this.refreshAssistSettings()
+  },
+
+  refreshAssistSettings() {
+    const adapter = createWxStorage()
+    const settings = loadSettings(adapter)
+    const autoMarkEnabled = canUseAutoMarkDeadCells(
+      adapter,
+      settings.autoMarkDeadCells,
+    )
+    this.setData({ autoMarkEnabled })
   },
 
   loadLevel(id: string) {
@@ -88,6 +105,7 @@ Page({
       tipIndex: 0,
       hasHint: false,
     })
+    this.refreshAssistSettings()
     wx.setNavigationBarTitle({ title: level.name })
   },
 
@@ -105,7 +123,8 @@ Page({
     if (!level) return
 
     let next = board
-    if (!opts?.skipAutoMark) {
+    const shouldAutoMark = !opts?.skipAutoMark && this.data.autoMarkEnabled
+    if (shouldAutoMark) {
       next = autoMarkDeadCells(next, level.regions)
     }
 
@@ -202,12 +221,14 @@ Page({
   onPaintEnd() {
     if (!this.paintStrokeActive || !this.level) return
     this.paintStrokeActive = false
-    // 笔画结束再跑死格清理（通常无变化，保持一致）
-    const board = autoMarkDeadCells(
-      this.data.board as Board,
-      this.level.regions,
-    )
-    this.commitBoard(board, { skipAutoMark: true })
+    // 笔画结束：仅在开启自动清死格时再跑一遍
+    if (this.data.autoMarkEnabled) {
+      const board = autoMarkDeadCells(
+        this.data.board as Board,
+        this.level.regions,
+      )
+      this.commitBoard(board, { skipAutoMark: true })
+    }
   },
 
   onUndo() {

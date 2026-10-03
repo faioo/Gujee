@@ -1,4 +1,6 @@
 import { getLevels } from '../../data/levels'
+import { isAutoMarkDeadCellsUnlocked } from '../../utils/features'
+import { loadSettings, setAutoMarkDeadCells } from '../../utils/settings'
 import { createWxStorage } from '../../utils/storage'
 import {
   getFirstTutorialId,
@@ -10,6 +12,8 @@ Page({
   data: {
     brand: '咕叽咕叽',
     brandEn: 'Goojee',
+    autoMarkUnlocked: true,
+    autoMarkDeadCells: false,
   },
 
   onShow() {
@@ -18,8 +22,27 @@ Page({
       const id = getFirstTutorialId(getLevels())
       if (id) {
         wx.redirectTo({ url: `/pages/game/game?id=${id}` })
+        return
       }
     }
+    this.refreshSettings()
+  },
+
+  refreshSettings() {
+    const adapter = createWxStorage()
+    const settings = loadSettings(adapter)
+    this.setData({
+      autoMarkUnlocked: isAutoMarkDeadCellsUnlocked(adapter),
+      autoMarkDeadCells: settings.autoMarkDeadCells,
+    })
+  },
+
+  onAutoMarkChange(e: WechatMiniprogram.TouchEvent) {
+    const adapter = createWxStorage()
+    if (!isAutoMarkDeadCellsUnlocked(adapter)) return
+    const enabled = Boolean((e.detail as { value?: boolean }).value)
+    setAutoMarkDeadCells(adapter, enabled)
+    this.setData({ autoMarkDeadCells: enabled })
   },
 
   goLevels() {

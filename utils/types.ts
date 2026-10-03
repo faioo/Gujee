@@ -36,6 +36,10 @@ export interface ProgressState {
   completedIds: string[]
 }
 
+export interface GameSettings {
+  autoMarkDeadCells: boolean
+}
+
 export interface StorageAdapter {
   getItem(key: string): string | null
   setItem(key: string, value: string): void
