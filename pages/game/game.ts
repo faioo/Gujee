@@ -35,11 +35,13 @@ function livesTextOf(lives: number): string {
   return '♥'.repeat(lives)
 }
 
-function overlayWrongCells(source: Board, target: Board): Board {
+function overlayLockedCells(source: Board, target: Board): Board {
   const next = cloneBoard(target)
   for (let r = 0; r < source.length; r++) {
     for (let c = 0; c < source[r].length; c++) {
-      if (source[r][c] === 'wrong') next[r][c] = 'wrong'
+      if (source[r][c] === 'wrong' || source[r][c] === 'place') {
+        next[r][c] = source[r][c]
+      }
     }
   }
   return next
@@ -273,6 +275,7 @@ Page({
 
     const board = cloneBoard(this.data.board as Board)
     if (board[r][c] === 'wrong') return
+    if (level.kind === 'normal' && board[r][c] === 'place') return
 
     if (isDouble) {
       this.lastTapAt = 0
@@ -356,7 +359,7 @@ Page({
     const prev = this.history.pop()
     if (!prev || !this.level) return
     this.tipIndex = prev.tipIndex
-    const board = overlayWrongCells(this.data.board as Board, prev.board)
+    const board = overlayLockedCells(this.data.board as Board, prev.board)
     const conflicts = getConflicts(board, this.level.regions)
     const tip = this.level.tips?.[this.tipIndex]
     const lives = Number(this.data.lives)
@@ -378,7 +381,7 @@ Page({
     const empty = createEmptyBoard(this.level.size)
     const board =
       this.level.kind === 'normal'
-        ? overlayWrongCells(this.data.board as Board, empty)
+        ? overlayLockedCells(this.data.board as Board, empty)
         : empty
     this.tipIndex = 0
     const tip = this.level.tips?.[0]
