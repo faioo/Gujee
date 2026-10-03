@@ -13,8 +13,8 @@ import {
   getForcedHint,
   isSolved,
   listPlacements,
-  type PaintStrokeMode,
 } from '../../utils/rules'
+import type { PaintStrokeMode } from '../../utils/rules'
 import { canUseAutoMarkDeadCells, isAutoMarkDeadCellsUnlocked } from '../../utils/features'
 import { loadSettings, setAutoMarkDeadCells, setColorWeakMode } from '../../utils/settings'
 import { createWxStorage, markLevelCompleted } from '../../utils/storage'
@@ -92,7 +92,7 @@ Page({
   history: [] as HistoryEntry[],
   tipIndex: 0,
   paintStrokeActive: false,
-  paintMode: null as PaintStrokeMode | null,,
+  paintMode: null as PaintStrokeMode | null,
   lastTapR: -1,
   lastTapC: -1,
   lastTapAt: 0,
