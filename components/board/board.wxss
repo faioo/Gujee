@@ -52,7 +52,13 @@
 }
 
 .mark {
-  color: rgba(44, 36, 27, 0.55);
+  font-size: 56rpx;
+  font-weight: 800;
+  color: rgba(44, 36, 27, 0.78);
+}
+
+.cell.dense .mark {
+  font-size: 44rpx;
 }
 
 .place {
