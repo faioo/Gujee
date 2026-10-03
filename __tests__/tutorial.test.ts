@@ -25,7 +25,8 @@ describe('tutorial metadata', () => {
 
   test('getNextNormalId walks normal levels and ends at last', () => {
     expect(getNextNormalId(LEVELS, 'n-5-1')).toBe('n-5-2')
-    expect(getNextNormalId(LEVELS, 'n-8-1')).toBeNull()
+    expect(getNextNormalId(LEVELS, 'n-8-1')).toBe('n-8-2')
+    expect(getNextNormalId(LEVELS, 'n-9-6')).toBeNull()
     expect(getNextNormalId(LEVELS, 'missing')).toBeNull()
   })
 })
