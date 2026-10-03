@@ -3,6 +3,8 @@ import {
   createEmptyBoard,
   cycleCellState,
   applyCellTap,
+  applyPaintCell,
+  paintModeFromOrigin,
   findDeadCells,
   getConflicts,
   getForcedHint,
@@ -28,6 +30,23 @@ describe('rules', () => {
     expect(applyCellTap('empty', 'single')).toBe('mark')
     expect(applyCellTap('mark', 'single')).toBe('empty')
     expect(applyCellTap('place', 'single')).toBe('empty')
+  })
+
+  test('paint stroke mode follows origin cell', () => {
+    expect(paintModeFromOrigin('empty')).toBe('mark')
+    expect(paintModeFromOrigin('mark')).toBe('empty')
+    expect(paintModeFromOrigin('place')).toBeNull()
+    expect(paintModeFromOrigin('wrong')).toBeNull()
+  })
+
+  test('applyPaintCell paints or erases without touching locked cells', () => {
+    expect(applyPaintCell('empty', 'mark')).toBe('mark')
+    expect(applyPaintCell('mark', 'mark')).toBe('mark')
+    expect(applyPaintCell('mark', 'empty')).toBe('empty')
+    expect(applyPaintCell('empty', 'empty')).toBe('empty')
+    expect(applyPaintCell('place', 'mark')).toBe('place')
+    expect(applyPaintCell('place', 'empty')).toBe('place')
+    expect(applyPaintCell('wrong', 'empty')).toBe('wrong')
   })
 
   test('applyCellTap double places from empty or mark', () => {

@@ -22,6 +22,22 @@ export function cycleCellState(state: CellState): CellState {
 }
 
 export type CellTapKind = 'single' | 'double'
+export type PaintStrokeMode = 'mark' | 'empty'
+
+/** 拖抹一笔：空白起笔涂 ×，× 起笔擦回空白；咕叽/红 × 不能起笔 */
+export function paintModeFromOrigin(state: CellState): PaintStrokeMode | null {
+  if (state === 'empty') return 'mark'
+  if (state === 'mark') return 'empty'
+  return null
+}
+
+/** 按本笔模式改一格；place / wrong 不变，非目标态也不变 */
+export function applyPaintCell(state: CellState, mode: PaintStrokeMode): CellState {
+  if (state === 'wrong' || state === 'place') return state
+  if (mode === 'mark' && state === 'empty') return 'mark'
+  if (mode === 'empty' && state === 'mark') return 'empty'
+  return state
+}
 
 /** 单击空↔×，点咕叽清回空；双击空白或 × 放咕叽 */
 export function applyCellTap(state: CellState, kind: CellTapKind): CellState {

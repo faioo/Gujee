@@ -7,10 +7,13 @@ import {
   cloneBoard,
   createEmptyBoard,
   applyCellTap,
+  applyPaintCell,
+  paintModeFromOrigin,
   getConflicts,
   getForcedHint,
   isSolved,
   listPlacements,
+  type PaintStrokeMode,
 } from '../../utils/rules'
 import { canUseAutoMarkDeadCells, isAutoMarkDeadCellsUnlocked } from '../../utils/features'
 import { loadSettings, setAutoMarkDeadCells, setColorWeakMode } from '../../utils/settings'
@@ -89,6 +92,7 @@ Page({
   history: [] as HistoryEntry[],
   tipIndex: 0,
   paintStrokeActive: false,
+  paintMode: null as PaintStrokeMode | null,,
   lastTapR: -1,
   lastTapC: -1,
   lastTapAt: 0,
@@ -305,14 +309,20 @@ Page({
     this.commitBoard(board)
   },
 
-  onPaintStart() {
+  onPaintStart(e: WechatMiniprogram.CustomEvent) {
     if (!this.level) return
+    const { r, c } = e.detail as { r: number; c: number }
+    const board = this.data.board as Board
+    const mode = paintModeFromOrigin(board?.[r]?.[c])
+    if (!mode) {
+      this.paintStrokeActive = false
+      this.paintMode = null
+      return
+    }
     this.lastTapAt = 0
     this.lastTapR = -1
     this.lastTapC = -1
-    if (this.level.kind === 'tutorial') {
-      // 教学关仍允许长按标 ×，但不强制高亮约束（降低挫败）
-    }
+    this.paintMode = mode
     this.pushHistory()
     this.paintStrokeActive = true
   },
@@ -320,13 +330,13 @@ Page({
   onPaintMark(e: WechatMiniprogram.CustomEvent) {
     const { r, c } = e.detail as { r: number; c: number }
     const level = this.level
-    if (!level || !this.paintStrokeActive) return
+    const mode = this.paintMode
+    if (!level || !this.paintStrokeActive || !mode) return
 
     const board = cloneBoard(this.data.board as Board)
-    if (board[r][c] === 'place' || board[r][c] === 'mark' || board[r][c] === 'wrong') {
-      return
-    }
-    board[r][c] = 'mark'
+    const next = applyPaintCell(board[r][c], mode)
+    if (next === board[r][c]) return
+    board[r][c] = next
 
     // 涂抹过程中不反复 auto（无新增 place）；结束时再统一处理
     const conflicts = getConflicts(board, level.regions)
@@ -345,6 +355,7 @@ Page({
   onPaintEnd() {
     if (!this.paintStrokeActive || !this.level) return
     this.paintStrokeActive = false
+    this.paintMode = null
     // 笔画结束：仅在开启自动清死格时再跑一遍
     if (this.data.autoMarkEnabled) {
       const board = autoMarkDeadCells(
