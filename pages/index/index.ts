@@ -1,10 +1,4 @@
 import { getLevels } from '../../data/levels'
-import { isAutoMarkDeadCellsUnlocked } from '../../utils/features'
-import {
-  loadSettings,
-  setAutoMarkDeadCells,
-  setColorWeakMode,
-} from '../../utils/settings'
 import { createWxStorage } from '../../utils/storage'
 import {
   getFirstTutorialId,
@@ -16,9 +10,6 @@ Page({
   data: {
     brand: '咕叽咕叽',
     brandEn: 'Goojee',
-    autoMarkUnlocked: true,
-    autoMarkDeadCells: false,
-    colorWeakMode: false,
   },
 
   onShow() {
@@ -30,31 +21,6 @@ Page({
         return
       }
     }
-    this.refreshSettings()
-  },
-
-  refreshSettings() {
-    const adapter = createWxStorage()
-    const settings = loadSettings(adapter)
-    this.setData({
-      autoMarkUnlocked: isAutoMarkDeadCellsUnlocked(adapter),
-      autoMarkDeadCells: settings.autoMarkDeadCells,
-      colorWeakMode: settings.colorWeakMode,
-    })
-  },
-
-  onAutoMarkChange(e: WechatMiniprogram.TouchEvent) {
-    const adapter = createWxStorage()
-    if (!isAutoMarkDeadCellsUnlocked(adapter)) return
-    const enabled = Boolean((e.detail as { value?: boolean }).value)
-    setAutoMarkDeadCells(adapter, enabled)
-    this.setData({ autoMarkDeadCells: enabled })
-  },
-
-  onColorWeakChange(e: WechatMiniprogram.TouchEvent) {
-    const enabled = Boolean((e.detail as { value?: boolean }).value)
-    setColorWeakMode(createWxStorage(), enabled)
-    this.setData({ colorWeakMode: enabled })
   },
 
   goLevels() {

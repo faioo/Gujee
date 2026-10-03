@@ -9,8 +9,8 @@ import {
   getForcedHint,
   isSolved,
 } from '../../utils/rules'
-import { canUseAutoMarkDeadCells } from '../../utils/features'
-import { loadSettings } from '../../utils/settings'
+import { canUseAutoMarkDeadCells, isAutoMarkDeadCellsUnlocked } from '../../utils/features'
+import { loadSettings, setAutoMarkDeadCells, setColorWeakMode } from '../../utils/settings'
 import { createWxStorage, markLevelCompleted } from '../../utils/storage'
 import {
   findLevel,
@@ -50,6 +50,7 @@ Page({
     tipIndex: 0,
     hasHint: false,
     autoMarkEnabled: false,
+    autoMarkUnlocked: true,
     colorWeak: false,
   },
 
@@ -82,6 +83,7 @@ Page({
     const size = Number(this.data.size) || 0
     this.setData({
       autoMarkEnabled,
+      autoMarkUnlocked: isAutoMarkDeadCellsUnlocked(adapter),
       colorWeak,
       colors: size > 0 ? colorsForSize(size, colorWeak) : this.data.colors,
     })
@@ -281,6 +283,32 @@ Page({
     this.setData({
       hasHint: true,
       highlight: pos,
+    })
+  },
+
+  onAutoMarkChange(e: WechatMiniprogram.TouchEvent) {
+    const adapter = createWxStorage()
+    if (!isAutoMarkDeadCellsUnlocked(adapter)) return
+    const enabled = Boolean((e.detail as { value?: boolean }).value)
+    setAutoMarkDeadCells(adapter, enabled)
+    const autoMarkEnabled = canUseAutoMarkDeadCells(adapter, enabled)
+    this.setData({ autoMarkEnabled })
+    if (autoMarkEnabled && this.level) {
+      const next = autoMarkDeadCells(
+        this.data.board as Board,
+        this.level.regions,
+      )
+      this.commitBoard(next, { skipAutoMark: true })
+    }
+  },
+
+  onColorWeakChange(e: WechatMiniprogram.TouchEvent) {
+    const enabled = Boolean((e.detail as { value?: boolean }).value)
+    setColorWeakMode(createWxStorage(), enabled)
+    const size = Number(this.data.size) || 0
+    this.setData({
+      colorWeak: enabled,
+      colors: size > 0 ? colorsForSize(size, enabled) : this.data.colors,
     })
   },
 

@@ -34,4 +34,28 @@
   <view class="hint-note" wx:if="{{hasHint}}">
     <text>提示格已高亮</text>
   </view>
+
+  <view class="settings">
+    <view class="setting-row" wx:if="{{autoMarkUnlocked}}">
+      <view class="setting-copy">
+        <text class="setting-name">自动清死格</text>
+        <text class="setting-desc">放置后自动标 × 不可能的格子</text>
+      </view>
+      <switch checked="{{autoMarkEnabled}}" color="#e07a3d" bindchange="onAutoMarkChange" />
+    </view>
+    <view class="setting-row locked" wx:else>
+      <view class="setting-copy">
+        <text class="setting-name">自动清死格</text>
+        <text class="setting-desc">成就或会员解锁后可开启</text>
+      </view>
+      <text class="lock-badge">未解锁</text>
+    </view>
+    <view class="setting-row">
+      <view class="setting-copy">
+        <text class="setting-name">色弱模式</text>
+        <text class="setting-desc">用图案和编号区分色块，不单靠颜色</text>
+      </view>
+      <switch checked="{{colorWeak}}" color="#e07a3d" bindchange="onColorWeakChange" />
+    </view>
+  </view>
 </view>
