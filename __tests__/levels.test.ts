@@ -25,14 +25,14 @@ describe('levels', () => {
     const tutorials = LEVELS.filter((l) => l.kind === 'tutorial')
     const normals = LEVELS.filter((l) => l.kind === 'normal')
     expect(tutorials.length).toBe(3)
-    expect(normals.length).toBe(14)
+    expect(normals.length).toBe(18)
     for (const t of tutorials) {
       expect(t.size).toBeLessThanOrEqual(4)
     }
     expect(normals.map((l) => l.size)).toEqual([
-      5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 9, 9, 9, 9,
+      5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 9, 9, 9, 9, 10, 10, 10, 10,
     ])
-    expect(normals.every((l) => l.size <= 9)).toBe(true)
+    expect(normals.every((l) => l.size <= 10)).toBe(true)
     for (const n of normals) {
       if (n.size >= 9) expect(n.difficulty).toBe(3)
     }

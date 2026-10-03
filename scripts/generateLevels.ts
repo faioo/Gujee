@@ -186,6 +186,7 @@ const SPECS: Spec[] = [
   { size: 8, count: 2, difficulty: 2, maxSingle: 2, maxRegion: 22, namePrefix: '星巢', idPrefix: 'n-8', uniqueMs: 1500 },
   { size: 9, count: 2, difficulty: 3, maxSingle: 2, maxRegion: 18, namePrefix: '霜岭', idPrefix: 'n-9', uniqueMs: 1200 },
   { size: 9, count: 4, difficulty: 3, maxSingle: 2, maxRegion: 16, namePrefix: '夜潮', idPrefix: 'n-9b', uniqueMs: 1200 },
+  { size: 10, count: 4, difficulty: 3, maxSingle: 2, maxRegion: 18, namePrefix: '深潮', idPrefix: 'n-10', uniqueMs: 2000 },
 ]
 
 const NUM = ['一', '二', '三', '四']
@@ -353,7 +354,7 @@ function generateOne(
     return null
   }
   const seedCells = new Set(cols.map((c, r) => `${r},${c}`))
-  const mutates = spec.size >= 9 ? 48 : 0
+  const mutates = spec.size >= 10 ? 64 : spec.size >= 9 ? 48 : 0
   for (let m = 0; m <= mutates; m++) {
     const sols = findSolutions(regions, 2, Date.now() + spec.uniqueMs)
     if (sols === null) {
@@ -382,14 +383,15 @@ function generateOne(
   return null
 }
 
-export function generateOfficialLevels(baseSeed = 20261003): Level[] {
+export function generateOfficialLevels(baseSeed = 20261003, onlySize?: number): Level[] {
   const out: Level[] = []
   let seed = baseSeed
   for (const spec of SPECS) {
+    if (onlySize !== undefined && spec.size !== onlySize) continue
     const seen = new Set<string>()
     for (let i = 0; i < spec.count; i++) {
       let found: number[][] | null = null
-      const tries = spec.size >= 9 ? 300 : 8000
+      const tries = spec.size >= 10 ? 400 : spec.size >= 9 ? 300 : 8000
       const stats: Record<string, number> = {}
       for (let t = 0; t < tries && !found; t++) {
         seed += 19 + spec.size * 5 + (t % 97)
@@ -421,6 +423,7 @@ export function generateOfficialLevels(baseSeed = 20261003): Level[] {
 }
 
 if (require.main === module) {
-  const levels = generateOfficialLevels()
+  const onlyTen = process.argv.includes('--only=10')
+  const levels = generateOfficialLevels(onlyTen ? 20261010 : 20261003, onlyTen ? 10 : undefined)
   process.stdout.write(JSON.stringify(levels))
 }
