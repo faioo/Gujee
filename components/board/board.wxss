@@ -99,12 +99,12 @@
 }
 
 .motif {
-  font-size: 36rpx;
+  font-size: 56rpx;
   line-height: 1;
   text-align: center;
   color: #2c241b;
 }
 
 .cell.dense .motif {
-  font-size: 22rpx;
+  font-size: 40rpx;
 }
