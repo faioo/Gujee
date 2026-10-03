@@ -1,3 +1,5 @@
+import { cellsOnPath } from '../../utils/gridPath'
+
 /** 进入涂抹标 × 的按住时长（微信原生 longpress 为 350ms） */
 const PAINT_HOLD_MS = 180
 
@@ -40,6 +42,8 @@ Component({
       self.skipNextTap = false
       self.boardRect = null
       self.lastPaintKey = ''
+      self.lastPaintR = -1
+      self.lastPaintC = -1
       self.originR = -1
       self.originC = -1
       self.holdTimer = 0
@@ -76,6 +80,8 @@ Component({
         self.skipNextTap = true
         self.originR = r
         self.originC = c
+        self.lastPaintR = r
+        self.lastPaintC = c
         self.lastPaintKey = `${r}-${c}`
         self.measureBoard()
       }, PAINT_HOLD_MS)
@@ -100,9 +106,19 @@ Component({
         self.strokeStarted = true
         this.triggerEvent('paintstart', { r: self.originR, c: self.originC })
         this.triggerEvent('paintmark', { r: self.originR, c: self.originC })
+        self.lastPaintR = self.originR
+        self.lastPaintC = self.originC
+        self.lastPaintKey = `${self.originR}-${self.originC}`
       }
-      self.lastPaintKey = key
-      this.triggerEvent('paintmark', { r: cell.r, c: cell.c })
+      const fromR = Number(self.lastPaintR)
+      const fromC = Number(self.lastPaintC)
+      const path = cellsOnPath(fromR, fromC, cell.r, cell.c)
+      for (const pos of path) {
+        this.triggerEvent('paintmark', { r: pos.r, c: pos.c })
+        self.lastPaintR = pos.r
+        self.lastPaintC = pos.c
+        self.lastPaintKey = `${pos.r}-${pos.c}`
+      }
     },
 
     onTouchEnd() {
@@ -112,6 +128,8 @@ Component({
       self.painting = false
       self.strokeStarted = false
       self.lastPaintKey = ''
+      self.lastPaintR = -1
+      self.lastPaintC = -1
       self.originR = -1
       self.originC = -1
       if (shouldEndStroke) {
