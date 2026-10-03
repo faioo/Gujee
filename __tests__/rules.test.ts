@@ -2,6 +2,7 @@ import {
   autoMarkDeadCells,
   createEmptyBoard,
   cycleCellState,
+  applyCellTap,
   findDeadCells,
   getConflicts,
   getForcedHint,
@@ -21,6 +22,18 @@ describe('rules', () => {
     expect(cycleCellState('empty')).toBe('mark')
     expect(cycleCellState('mark')).toBe('place')
     expect(cycleCellState('place')).toBe('empty')
+  })
+
+  test('applyCellTap single toggles empty and mark', () => {
+    expect(applyCellTap('empty', 'single')).toBe('mark')
+    expect(applyCellTap('mark', 'single')).toBe('empty')
+    expect(applyCellTap('place', 'single')).toBe('empty')
+  })
+
+  test('applyCellTap double places from empty or mark', () => {
+    expect(applyCellTap('empty', 'double')).toBe('place')
+    expect(applyCellTap('mark', 'double')).toBe('place')
+    expect(applyCellTap('place', 'double')).toBe('empty')
   })
 
   test('same row conflict', () => {

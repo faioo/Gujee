@@ -15,6 +15,6 @@
     <text class="rules-title">三句话学会</text>
     <text class="rule">每行、每列、每个色块各放 1 只咕叽</text>
     <text class="rule">咕叽之间不能相邻（含斜角）</text>
-    <text class="rule">点格子：空 → × → 咕叽 → 空</text>
+    <text class="rule">点一下：空 ↔ ×；空白或 × 上快速点两下放咕叽</text>
   </view>
 </view>

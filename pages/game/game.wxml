@@ -22,7 +22,7 @@
   </view>
 
   <view class="hint-line">
-    <text>点按切换 · 长按拖动快速标 ×{{autoMarkEnabled ? ' · 已开启自动清死格' : ''}}</text>
+    <text>点一下空 ↔ × · 双击放咕叽 · 长按拖动标 ×{{autoMarkEnabled ? ' · 已开启自动清死格' : ''}}</text>
   </view>
 
   <view class="toolbar">

@@ -20,6 +20,18 @@ export function cycleCellState(state: CellState): CellState {
   return NEXT_STATE[state]
 }
 
+export type CellTapKind = 'single' | 'double'
+
+/** 单击空↔×，点咕叽清回空；双击空白或 × 放咕叽 */
+export function applyCellTap(state: CellState, kind: CellTapKind): CellState {
+  if (kind === 'double' && (state === 'empty' || state === 'mark')) {
+    return 'place'
+  }
+  if (state === 'empty') return 'mark'
+  if (state === 'mark') return 'empty'
+  return 'empty'
+}
+
 export function listPlacements(board: Board): CellPos[] {
   const result: CellPos[] = []
   for (let r = 0; r < board.length; r++) {

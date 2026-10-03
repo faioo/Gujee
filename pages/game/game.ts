@@ -4,7 +4,7 @@ import {
   autoMarkDeadCells,
   cloneBoard,
   createEmptyBoard,
-  cycleCellState,
+  applyCellTap,
   getConflicts,
   getForcedHint,
   isSolved,
@@ -18,7 +18,9 @@ import {
   onTutorialLevelSolved,
   skipTutorial,
 } from '../../utils/tutorialFlow'
-import type { Board, CellPos, Level } from '../../utils/types'
+import type { Board, CellPos, CellState, Level } from '../../utils/types'
+
+const DBL_TAP_MS = 320
 
 interface HistoryEntry {
   board: Board
@@ -58,6 +60,10 @@ Page({
   history: [] as HistoryEntry[],
   tipIndex: 0,
   paintStrokeActive: false,
+  lastTapR: -1,
+  lastTapC: -1,
+  lastTapAt: 0,
+  lastTapStart: 'empty' as CellState,
 
   onLoad(query: Record<string, string | undefined>) {
     const id = query.id
@@ -99,6 +105,10 @@ Page({
     this.history = []
     this.tipIndex = 0
     this.paintStrokeActive = false
+    this.lastTapR = -1
+    this.lastTapC = -1
+    this.lastTapAt = 0
+    this.lastTapStart = 'empty'
     const board = createEmptyBoard(level.size)
     const tip = level.tips?.[0]
     this.setData({
@@ -189,14 +199,40 @@ Page({
       }
     }
 
-    this.pushHistory()
+    const now = Date.now()
+    const isDouble =
+      this.lastTapR === r &&
+      this.lastTapC === c &&
+      now - this.lastTapAt > 0 &&
+      now - this.lastTapAt <= DBL_TAP_MS &&
+      (this.lastTapStart === 'empty' || this.lastTapStart === 'mark')
+
     const board = cloneBoard(this.data.board as Board)
-    board[r][c] = cycleCellState(board[r][c])
+    if (isDouble) {
+      this.lastTapAt = 0
+      this.lastTapR = -1
+      this.lastTapC = -1
+      const next = applyCellTap(board[r][c], 'double')
+      if (next === board[r][c]) return
+      board[r][c] = next
+      this.commitBoard(board)
+      return
+    }
+
+    this.lastTapR = r
+    this.lastTapC = c
+    this.lastTapAt = now
+    this.lastTapStart = board[r][c]
+    this.pushHistory()
+    board[r][c] = applyCellTap(board[r][c], 'single')
     this.commitBoard(board)
   },
 
   onPaintStart() {
     if (!this.level) return
+    this.lastTapAt = 0
+    this.lastTapR = -1
+    this.lastTapC = -1
     if (this.level.kind === 'tutorial') {
       // 教学关仍允许长按标 ×，但不强制高亮约束（降低挫败）
     }

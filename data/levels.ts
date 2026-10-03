@@ -22,7 +22,7 @@ export const LEVELS: Level[] = [
     ],
     tips: [
       {
-        text: '每个色块放 1 只咕叽。这一格是整块唯一空位——点两次放上咕叽！',
+        text: '每个色块放 1 只咕叽。这一格是整块唯一空位——快速点两下放上咕叽！',
         highlight: { r: 1, c: 3 },
         expect: 'place',
       },
@@ -51,7 +51,7 @@ export const LEVELS: Level[] = [
         expect: 'mark',
       },
       {
-        text: '单格色块必须放咕叽——点高亮格两次放上，再解开整盘。',
+        text: '单格色块必须放咕叽——在高亮格快速点两下放上，再解开整盘。',
         highlight: { r: 0, c: 2 },
         expect: 'place',
       },
