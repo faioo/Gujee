@@ -44,6 +44,17 @@ export function getNextTutorialId(
   return tutorials[idx + 1].id
 }
 
+export function getNextNormalId(
+  levels: Level[],
+  currentId: string,
+): string | null {
+  const normals = getNormalLevels(levels)
+  const idx = normals.findIndex((l) => l.id === currentId)
+  if (idx < 0) return null
+  if (idx + 1 >= normals.length) return null
+  return normals[idx + 1].id
+}
+
 /**
  * 教学关通关后的导航决策。
  * - 还有下一教学关 → 返回其 id

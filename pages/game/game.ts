@@ -14,6 +14,7 @@ import { loadSettings } from '../../utils/settings'
 import { createWxStorage, markLevelCompleted } from '../../utils/storage'
 import {
   findLevel,
+  getNextNormalId,
   onTutorialLevelSolved,
   skipTutorial,
 } from '../../utils/tutorialFlow'
@@ -333,15 +334,23 @@ Page({
     }
 
     markLevelCompleted(adapter, level.id)
+    const nextId = getNextNormalId(getLevels(), level.id)
     wx.showModal({
       title: '过关！',
       content: `${level.name} 完成了`,
-      confirmText: '关卡列表',
-      cancelText: '再看一眼',
+      confirmText: '下一关',
+      cancelText: '关卡列表',
       success: (res) => {
         if (res.confirm) {
-          wx.navigateBack({ fail: () => wx.redirectTo({ url: '/pages/levels/levels' }) })
+          if (nextId) {
+            this.loadLevel(nextId)
+            return
+          }
+          wx.showToast({ title: '已经是最后一关', icon: 'none' })
+          wx.redirectTo({ url: '/pages/levels/levels' })
+          return
         }
+        wx.navigateBack({ fail: () => wx.redirectTo({ url: '/pages/levels/levels' }) })
       },
     })
   },
