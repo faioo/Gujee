@@ -1,6 +1,8 @@
 import {
+  autoMarkDeadCells,
   createEmptyBoard,
   cycleCellState,
+  findDeadCells,
   getConflicts,
   getForcedHint,
   isSolved,
@@ -86,5 +88,40 @@ describe('rules', () => {
     const board = createEmptyBoard(4)
     const hint = getForcedHint(board, regions)
     expect(hint).toEqual({ r: 0, c: 1 })
+  })
+
+  test('autoMarkDeadCells marks row/col/region/adjacent after place', () => {
+    const regions = [
+      [0, 0, 0, 0],
+      [0, 0, 2, 1],
+      [2, 2, 2, 2],
+      [2, 3, 3, 3],
+    ]
+    let board = createEmptyBoard(4)
+    board[1][3] = 'place'
+    board = autoMarkDeadCells(board, regions)
+    // same row
+    expect(board[1][0]).toBe('mark')
+    expect(board[1][1]).toBe('mark')
+    expect(board[1][2]).toBe('mark')
+    // same col
+    expect(board[0][3]).toBe('mark')
+    expect(board[2][3]).toBe('mark')
+    expect(board[3][3]).toBe('mark')
+    // adjacent diagonal
+    expect(board[0][2]).toBe('mark')
+    expect(board[2][2]).toBe('mark')
+    // placement preserved
+    expect(board[1][3]).toBe('place')
+  })
+
+  test('findDeadCells empty when board empty', () => {
+    const regions = [
+      [0, 0, 0, 0],
+      [0, 0, 2, 1],
+      [2, 2, 2, 2],
+      [2, 3, 3, 3],
+    ]
+    expect(findDeadCells(createEmptyBoard(4), regions)).toEqual([])
   })
 })

@@ -1,4 +1,10 @@
-<view class="board" style="--n: {{size}};">
+<view
+  class="board"
+  style="--n: {{size}};"
+  bindtouchmove="onTouchMove"
+  bindtouchend="onTouchEnd"
+  bindtouchcancel="onTouchEnd"
+>
   <block wx:for="{{board}}" wx:for-item="row" wx:for-index="r" wx:key="r">
     <view class="row">
       <block wx:for="{{row}}" wx:for-item="cell" wx:for-index="c" wx:key="c">
@@ -8,6 +14,7 @@
           data-r="{{r}}"
           data-c="{{c}}"
           bindtap="onCellTap"
+          bindlongpress="onLongPress"
         >
           <text wx:if="{{cell === 'mark'}}" class="sym mark">×</text>
           <view wx:elif="{{cell === 'place'}}" class="sym place">

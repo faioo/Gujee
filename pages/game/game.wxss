@@ -20,6 +20,13 @@
   padding: 12rpx 32rpx 24rpx;
 }
 
+.hint-line {
+  padding: 0 32rpx 16rpx;
+  text-align: center;
+  font-size: 22rpx;
+  color: #7a6a5a;
+}
+
 .toolbar {
   display: flex;
   gap: 16rpx;

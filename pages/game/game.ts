@@ -1,6 +1,7 @@
 import { getLevels } from '../../data/levels'
 import { colorsForSize } from '../../utils/colors'
 import {
+  autoMarkDeadCells,
   cloneBoard,
   createEmptyBoard,
   cycleCellState,
@@ -50,6 +51,7 @@ Page({
   level: null as Level | null,
   history: [] as HistoryEntry[],
   tipIndex: 0,
+  paintStrokeActive: false,
 
   onLoad(query: Record<string, string | undefined>) {
     const id = query.id
@@ -69,6 +71,7 @@ Page({
     this.level = level
     this.history = []
     this.tipIndex = 0
+    this.paintStrokeActive = false
     const board = createEmptyBoard(level.size)
     const tip = level.tips?.[0]
     this.setData({
@@ -96,6 +99,52 @@ Page({
     if (this.history.length > 80) this.history.shift()
   },
 
+  /** 应用盘面并自动清死格、刷新冲突/教学、判定胜利 */
+  commitBoard(board: Board, opts?: { skipAutoMark?: boolean }) {
+    const level = this.level
+    if (!level) return
+
+    let next = board
+    if (!opts?.skipAutoMark) {
+      next = autoMarkDeadCells(next, level.regions)
+    }
+
+    // 教学：若当前 tip 目标已被满足（含自动标 ×），推进提示
+    this.syncTutorialTipsWithBoard(next)
+
+    const conflicts = getConflicts(next, level.regions)
+    const tip = level.tips?.[this.tipIndex]
+    this.setData({
+      board: next,
+      conflictMap: toConflictMap(conflicts.cells),
+      hasHint: false,
+      tipText: tip?.text ?? '',
+      highlight: tip?.highlight ?? null,
+      tipIndex: this.tipIndex,
+    })
+
+    if (isSolved(next, level.regions)) {
+      this.onSolved()
+    }
+  },
+
+  syncTutorialTipsWithBoard(board: Board) {
+    const level = this.level
+    if (!level?.tips || level.kind !== 'tutorial') return
+    while (this.tipIndex < level.tips.length) {
+      const tip = level.tips[this.tipIndex]
+      if (!tip.highlight || !tip.expect) break
+      const { r, c } = tip.highlight
+      if (board[r][c] === tip.expect) {
+        if (this.tipIndex + 1 < level.tips.length) {
+          this.tipIndex += 1
+          continue
+        }
+      }
+      break
+    }
+  },
+
   onCellTap(e: WechatMiniprogram.CustomEvent) {
     const { r, c } = e.detail as { r: number; c: number }
     const level = this.level
@@ -113,44 +162,52 @@ Page({
 
     this.pushHistory()
     const board = cloneBoard(this.data.board as Board)
-    const nextState = cycleCellState(board[r][c])
-    board[r][c] = nextState
+    board[r][c] = cycleCellState(board[r][c])
+    this.commitBoard(board)
+  },
 
-    if (level.kind === 'tutorial') {
-      this.advanceTutorialTip(board, r, c, nextState)
+  onPaintStart() {
+    if (!this.level) return
+    if (this.level.kind === 'tutorial') {
+      // 教学关仍允许长按标 ×，但不强制高亮约束（降低挫败）
     }
+    this.pushHistory()
+    this.paintStrokeActive = true
+  },
 
+  onPaintMark(e: WechatMiniprogram.CustomEvent) {
+    const { r, c } = e.detail as { r: number; c: number }
+    const level = this.level
+    if (!level || !this.paintStrokeActive) return
+
+    const board = cloneBoard(this.data.board as Board)
+    // 长按涂抹：只把空格标成 ×，不覆盖已放置的咕叽
+    if (board[r][c] === 'place') return
+    if (board[r][c] === 'mark') return
+    board[r][c] = 'mark'
+
+    // 涂抹过程中不反复 auto（无新增 place）；结束时再统一处理
     const conflicts = getConflicts(board, level.regions)
+    this.syncTutorialTipsWithBoard(board)
+    const tip = level.tips?.[this.tipIndex]
     this.setData({
       board,
       conflictMap: toConflictMap(conflicts.cells),
-      hasHint: false,
-      tipText: level.tips?.[this.tipIndex]?.text ?? this.data.tipText,
-      highlight: level.tips?.[this.tipIndex]?.highlight ?? null,
+      tipText: tip?.text ?? this.data.tipText,
+      highlight: level.kind === 'tutorial' ? tip?.highlight ?? null : this.data.highlight,
       tipIndex: this.tipIndex,
     })
-
-    if (isSolved(board, level.regions)) {
-      this.onSolved()
-    }
   },
 
-  advanceTutorialTip(
-    board: Board,
-    r: number,
-    c: number,
-    state: string,
-  ) {
-    const level = this.level
-    if (!level?.tips) return
-    const tip = level.tips[this.tipIndex]
-    if (!tip?.highlight || !tip.expect) return
-    if (tip.highlight.r === r && tip.highlight.c === c && state === tip.expect) {
-      if (this.tipIndex + 1 < level.tips.length) {
-        this.tipIndex += 1
-      }
-    }
-    void board
+  onPaintEnd() {
+    if (!this.paintStrokeActive || !this.level) return
+    this.paintStrokeActive = false
+    // 笔画结束再跑死格清理（通常无变化，保持一致）
+    const board = autoMarkDeadCells(
+      this.data.board as Board,
+      this.level.regions,
+    )
+    this.commitBoard(board, { skipAutoMark: true })
   },
 
   onUndo() {

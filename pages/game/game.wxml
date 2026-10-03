@@ -14,7 +14,14 @@
       conflictMap="{{conflictMap}}"
       highlight="{{highlight}}"
       bind:celltap="onCellTap"
+      bind:paintstart="onPaintStart"
+      bind:paintmark="onPaintMark"
+      bind:paintend="onPaintEnd"
     ></board>
+  </view>
+
+  <view class="hint-line">
+    <text>点按切换 · 长按拖动快速标 × · 放置后自动清死格</text>
   </view>
 
   <view class="toolbar">

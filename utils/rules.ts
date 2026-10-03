@@ -98,12 +98,42 @@ export function isSolved(board: Board, regions: number[][]): boolean {
   return getConflicts(board, regions).cells.length === 0
 }
 
-function canPlace(board: Board, regions: number[][], r: number, c: number): boolean {
-  if (board[r][c] === 'mark') return false
+/** 在当前盘面下，该格是否还能合法放置（已 mark 则否） */
+export function canPlace(
+  board: Board,
+  regions: number[][],
+  r: number,
+  c: number,
+): boolean {
+  if (board[r][c] === 'mark' || board[r][c] === 'place') return false
   const next = cloneBoard(board)
   next[r][c] = 'place'
   const conflicts = getConflicts(next, regions).cells
   return !conflicts.some((p) => p.r === r && p.c === c)
+}
+
+/** 空格中已不可能再放咕叽的死格 */
+export function findDeadCells(board: Board, regions: number[][]): CellPos[] {
+  const n = board.length
+  const dead: CellPos[] = []
+  for (let r = 0; r < n; r++) {
+    for (let c = 0; c < n; c++) {
+      if (board[r][c] !== 'empty') continue
+      if (!canPlace(board, regions, r, c)) {
+        dead.push({ r, c })
+      }
+    }
+  }
+  return dead
+}
+
+/** 将死格自动标为 ×，不改动已有 place/mark */
+export function autoMarkDeadCells(board: Board, regions: number[][]): Board {
+  const next = cloneBoard(board)
+  for (const { r, c } of findDeadCells(next, regions)) {
+    next[r][c] = 'mark'
+  }
+  return next
 }
 
 /**
