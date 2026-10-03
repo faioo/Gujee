@@ -26,8 +26,8 @@ import type { Board, CellPos, CellState, Level } from '../../utils/types'
 const DBL_TAP_MS = 320
 const MAX_LIVES = 2
 
-function remainPlaceCount(board: Board, size: number): number {
-  return Math.max(0, size - listPlacements(board).length)
+function placedCountOf(board: Board): number {
+  return listPlacements(board).length
 }
 
 function livesTextOf(lives: number): string {
@@ -77,7 +77,7 @@ Page({
     autoMarkEnabled: false,
     autoMarkUnlocked: true,
     colorWeak: false,
-    remainPlace: 0,
+    placedCount: 0,
     lives: MAX_LIVES,
     livesText: '♥♥',
     showLives: false,
@@ -156,7 +156,7 @@ Page({
       highlight: tip?.highlight ?? null,
       tipIndex: 0,
       hasHint: false,
-      remainPlace: level.size,
+      placedCount: 0,
       lives: MAX_LIVES,
       livesText: livesTextOf(MAX_LIVES),
       showLives: level.kind === 'normal',
@@ -197,7 +197,7 @@ Page({
       tipText: tip?.text ?? '',
       highlight: tip?.highlight ?? null,
       tipIndex: this.tipIndex,
-      remainPlace: remainPlaceCount(next, level.size),
+      placedCount: placedCountOf(next),
       livesText: livesTextOf(lives),
     })
 
@@ -335,7 +335,7 @@ Page({
       tipText: tip?.text ?? this.data.tipText,
       highlight: level.kind === 'tutorial' ? tip?.highlight ?? null : this.data.highlight,
       tipIndex: this.tipIndex,
-      remainPlace: remainPlaceCount(board, level.size),
+      placedCount: placedCountOf(board),
     })
   },
 
@@ -367,19 +367,19 @@ Page({
       tipText: tip?.text ?? '',
       highlight: tip?.highlight ?? null,
       hasHint: false,
-      remainPlace: remainPlaceCount(board, this.level.size),
+      placedCount: placedCountOf(board),
       livesText: livesTextOf(lives),
     })
   },
 
   onClear() {
     if (!this.level) return
-    if (this.level.kind === 'normal') {
-      this.loadLevel(this.level.id)
-      return
-    }
     this.pushHistory()
-    const board = createEmptyBoard(this.level.size)
+    const empty = createEmptyBoard(this.level.size)
+    const board =
+      this.level.kind === 'normal'
+        ? overlayWrongCells(this.data.board as Board, empty)
+        : empty
     this.tipIndex = 0
     const tip = this.level.tips?.[0]
     this.setData({
@@ -389,7 +389,7 @@ Page({
       tipText: tip?.text ?? '',
       highlight: tip?.highlight ?? null,
       hasHint: false,
-      remainPlace: this.level.size,
+      placedCount: placedCountOf(board),
     })
   },
 

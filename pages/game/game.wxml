@@ -6,8 +6,12 @@
   <coach-tip wx:if="{{isTutorial}}" text="{{tipText}}"></coach-tip>
 
   <view class="status-bar">
-    <text class="status-item">剩余咕叽 {{remainPlace}}</text>
-    <text class="status-item lives" wx:if="{{showLives}}">生命 {{livesText}}</text>
+    <view class="status-item">
+      <text>咕叽 {{placedCount}}/{{size}}</text>
+    </view>
+    <view class="status-item lives" wx:if="{{showLives}}">
+      <text>生命 {{livesText}}</text>
+    </view>
   </view>
 
   <view class="board-wrap">

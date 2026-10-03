@@ -51,24 +51,24 @@
   line-height: 1;
 }
 
-.mark {
-  font-size: 56rpx;
+.sym.mark {
+  font-size: 64rpx;
   font-weight: 800;
   color: rgba(44, 36, 27, 0.78);
 }
 
-.cell.dense .mark {
-  font-size: 44rpx;
+.cell.dense .sym.mark {
+  font-size: 52rpx;
 }
 
-.wrong {
-  font-size: 60rpx;
+.sym.wrong {
+  font-size: 64rpx;
   font-weight: 800;
   color: #d64545;
 }
 
-.cell.dense .wrong {
-  font-size: 48rpx;
+.cell.dense .sym.wrong {
+  font-size: 52rpx;
 }
 
 .place {
