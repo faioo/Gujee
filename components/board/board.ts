@@ -34,9 +34,12 @@ Component({
     attached() {
       const self = this as any
       self.painting = false
+      self.strokeStarted = false
       self.skipNextTap = false
       self.boardRect = null
       self.lastPaintKey = ''
+      self.originR = -1
+      self.originC = -1
       self.holdTimer = 0
       setTimeout(() => self.measureBoard(), 80)
     },
@@ -67,11 +70,12 @@ Component({
       self.holdTimer = setTimeout(() => {
         self.holdTimer = 0
         self.painting = true
+        self.strokeStarted = false
         self.skipNextTap = true
+        self.originR = r
+        self.originC = c
         self.lastPaintKey = `${r}-${c}`
         self.measureBoard()
-        this.triggerEvent('paintstart', { r, c })
-        this.triggerEvent('paintmark', { r, c })
       }, PAINT_HOLD_MS)
     },
 
@@ -90,6 +94,11 @@ Component({
       if (!cell) return
       const key = `${cell.r}-${cell.c}`
       if (key === self.lastPaintKey) return
+      if (!self.strokeStarted) {
+        self.strokeStarted = true
+        this.triggerEvent('paintstart', { r: self.originR, c: self.originC })
+        this.triggerEvent('paintmark', { r: self.originR, c: self.originC })
+      }
       self.lastPaintKey = key
       this.triggerEvent('paintmark', { r: cell.r, c: cell.c })
     },
@@ -97,10 +106,15 @@ Component({
     onTouchEnd() {
       this.clearHoldTimer()
       const self = this as any
-      if (!self.painting) return
+      const shouldEndStroke = Boolean(self.painting && self.strokeStarted)
       self.painting = false
+      self.strokeStarted = false
       self.lastPaintKey = ''
-      this.triggerEvent('paintend', {})
+      self.originR = -1
+      self.originC = -1
+      if (shouldEndStroke) {
+        this.triggerEvent('paintend', {})
+      }
     },
 
     clearHoldTimer() {
