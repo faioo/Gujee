@@ -14,7 +14,7 @@
           data-r="{{r}}"
           data-c="{{c}}"
           bindtap="onCellTap"
-          bindlongpress="onLongPress"
+          bindtouchstart="onTouchStart"
         >
           <text wx:if="{{cell === 'mark'}}" class="sym mark">×</text>
           <view wx:elif="{{cell === 'place'}}" class="sym place">

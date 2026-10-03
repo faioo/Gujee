@@ -1,4 +1,6 @@
-/* 棋盘：点按切换；长按拖动涂抹 × */
+/** 进入涂抹标 × 的按住时长（微信原生 longpress 为 350ms） */
+const PAINT_HOLD_MS = 180
+
 Component({
   properties: {
     size: { type: Number, value: 5 },
@@ -16,7 +18,11 @@ Component({
       self.skipNextTap = false
       self.boardRect = null
       self.lastPaintKey = ''
+      self.holdTimer = 0
       setTimeout(() => self.measureBoard(), 80)
+    },
+    detached() {
+      this.clearHoldTimer()
     },
   },
 
@@ -31,15 +37,23 @@ Component({
       this.triggerEvent('celltap', { r: Number(r), c: Number(c) })
     },
 
-    onLongPress(e: WechatMiniprogram.TouchEvent) {
-      const self = this as any
+    onTouchStart(e: WechatMiniprogram.TouchEvent) {
       const { r, c } = e.currentTarget.dataset as { r: string; c: string }
-      self.painting = true
-      self.skipNextTap = true
-      self.lastPaintKey = `${r}-${c}`
-      self.measureBoard()
-      this.triggerEvent('paintstart', { r: Number(r), c: Number(c) })
-      this.triggerEvent('paintmark', { r: Number(r), c: Number(c) })
+      this.beginHold(Number(r), Number(c))
+    },
+
+    beginHold(r: number, c: number) {
+      const self = this as any
+      this.clearHoldTimer()
+      self.holdTimer = setTimeout(() => {
+        self.holdTimer = 0
+        self.painting = true
+        self.skipNextTap = true
+        self.lastPaintKey = `${r}-${c}`
+        self.measureBoard()
+        this.triggerEvent('paintstart', { r, c })
+        this.triggerEvent('paintmark', { r, c })
+      }, PAINT_HOLD_MS)
     },
 
     onTouchMove(e: WechatMiniprogram.TouchEvent) {
@@ -62,11 +76,20 @@ Component({
     },
 
     onTouchEnd() {
+      this.clearHoldTimer()
       const self = this as any
       if (!self.painting) return
       self.painting = false
       self.lastPaintKey = ''
       this.triggerEvent('paintend', {})
+    },
+
+    clearHoldTimer() {
+      const self = this as any
+      if (self.holdTimer) {
+        clearTimeout(self.holdTimer)
+        self.holdTimer = 0
+      }
     },
 
     measureBoard() {
