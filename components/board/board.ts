@@ -16,24 +16,19 @@ Component({
   },
 
   data: {
-    patternIds: [] as number[][],
-    regionLabels: [] as number[][],
     motifGlyphs: [] as string[][],
   },
 
   observers: {
     regions(regions: number[][]) {
       const rows = Array.isArray(regions) ? regions : []
-      const patternIds = rows.map((row) =>
-        (row || []).map((id) => ((Number(id) % MOTIF_COUNT) + MOTIF_COUNT) % MOTIF_COUNT),
+      const motifGlyphs = rows.map((row) =>
+        (row || []).map((id) => {
+          const idx = ((Number(id) % MOTIF_COUNT) + MOTIF_COUNT) % MOTIF_COUNT
+          return MOTIFS[idx]
+        }),
       )
-      const regionLabels = rows.map((row) =>
-        (row || []).map((id) => Number(id) + 1),
-      )
-      const motifGlyphs = patternIds.map((row) =>
-        row.map((id) => MOTIFS[id]),
-      )
-      this.setData({ patternIds, regionLabels, motifGlyphs })
+      this.setData({ motifGlyphs })
     },
   },
 

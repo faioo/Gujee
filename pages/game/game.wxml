@@ -53,7 +53,7 @@
     <view class="setting-row">
       <view class="setting-copy">
         <text class="setting-name">色弱模式</text>
-        <text class="setting-desc">用图案和编号区分色块，不单靠颜色</text>
+        <text class="setting-desc">用图案区分色块，不单靠颜色</text>
       </view>
       <switch checked="{{colorWeak}}" color="#e07a3d" bindchange="onColorWeakChange" />
     </view>

@@ -84,44 +84,27 @@
   clip-path: polygon(0 0, 100% 50%, 0 100%);
 }
 
-.region-id {
-  position: absolute;
-  left: 6rpx;
-  top: 2rpx;
-  font-size: 16rpx;
-  font-weight: 700;
-  color: rgba(44, 36, 27, 0.42);
-  z-index: 0;
-  line-height: 1.2;
-}
-
-.cell.dense .region-id {
-  font-size: 12rpx;
-}
-
 .motif-layer {
   position: absolute;
-  top: 8%;
-  right: 8%;
-  bottom: 8%;
-  left: 8%;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   display: flex;
-  flex-wrap: wrap;
-  align-content: space-around;
-  justify-content: space-around;
+  align-items: center;
+  justify-content: center;
   pointer-events: none;
   z-index: 0;
-  opacity: 0.22;
+  opacity: 0.32;
 }
 
 .motif {
-  width: 50%;
-  font-size: 22rpx;
+  font-size: 36rpx;
   line-height: 1;
   text-align: center;
   color: #2c241b;
 }
 
 .cell.dense .motif {
-  font-size: 14rpx;
+  font-size: 22rpx;
 }
