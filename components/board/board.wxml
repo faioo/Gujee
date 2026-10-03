@@ -20,6 +20,7 @@
             <text class="motif">{{motifGlyphs[r][c]}}</text>
           </view>
           <text wx:if="{{cell === 'mark'}}" class="sym mark">×</text>
+          <text wx:elif="{{cell === 'wrong'}}" class="sym wrong">×</text>
           <view wx:elif="{{cell === 'place'}}" class="sym place">
             <view class="bird"></view>
           </view>

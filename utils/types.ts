@@ -1,6 +1,6 @@
 /** 咕叽咕叽 / Goojee 核心类型 */
 
-export type CellState = 'empty' | 'mark' | 'place'
+export type CellState = 'empty' | 'mark' | 'place' | 'wrong'
 export type LevelKind = 'tutorial' | 'normal'
 export type Difficulty = 0 | 1 | 2 | 3
 

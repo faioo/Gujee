@@ -4,6 +4,7 @@ const NEXT_STATE: Record<CellState, CellState> = {
   empty: 'mark',
   mark: 'place',
   place: 'empty',
+  wrong: 'wrong',
 }
 
 export function createEmptyBoard(size: number): Board {
@@ -24,6 +25,7 @@ export type CellTapKind = 'single' | 'double'
 
 /** 单击空↔×，点咕叽清回空；双击空白或 × 放咕叽 */
 export function applyCellTap(state: CellState, kind: CellTapKind): CellState {
+  if (state === 'wrong') return 'wrong'
   if (kind === 'double' && (state === 'empty' || state === 'mark')) {
     return 'place'
   }
@@ -117,7 +119,9 @@ export function canPlace(
   r: number,
   c: number,
 ): boolean {
-  if (board[r][c] === 'mark' || board[r][c] === 'place') return false
+  if (board[r][c] === 'mark' || board[r][c] === 'place' || board[r][c] === 'wrong') {
+    return false
+  }
   const next = cloneBoard(board)
   next[r][c] = 'place'
   const conflicts = getConflicts(next, regions).cells
@@ -167,7 +171,7 @@ export function getForcedHint(board: Board, regions: number[][]): CellPos | null
     for (let r = 0; r < n; r++) {
       for (let c = 0; c < n; c++) {
         if (!predicate(r, c)) continue
-        if (board[r][c] === 'place') continue
+        if (board[r][c] === 'place' || board[r][c] === 'wrong') continue
         if (canPlace(board, regions, r, c)) {
           list.push({ r, c })
         }

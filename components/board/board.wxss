@@ -61,6 +61,16 @@
   font-size: 44rpx;
 }
 
+.wrong {
+  font-size: 60rpx;
+  font-weight: 800;
+  color: #d64545;
+}
+
+.cell.dense .wrong {
+  font-size: 48rpx;
+}
+
 .place {
   position: relative;
   z-index: 1;

@@ -62,12 +62,20 @@ Component({
         return
       }
       const { r, c } = e.currentTarget.dataset as { r: string; c: string }
-      this.triggerEvent('celltap', { r: Number(r), c: Number(c) })
+      const ri = Number(r)
+      const ci = Number(c)
+      const board = this.data.board as string[][]
+      if (board?.[ri]?.[ci] === 'wrong') return
+      this.triggerEvent('celltap', { r: ri, c: ci })
     },
 
     onTouchStart(e: WechatMiniprogram.TouchEvent) {
       const { r, c } = e.currentTarget.dataset as { r: string; c: string }
-      this.beginHold(Number(r), Number(c))
+      const ri = Number(r)
+      const ci = Number(c)
+      const board = this.data.board as string[][]
+      if (board?.[ri]?.[ci] === 'wrong') return
+      this.beginHold(ri, ci)
     },
 
     beginHold(r: number, c: number) {

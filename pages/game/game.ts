@@ -1,5 +1,7 @@
 import { getLevels } from '../../data/levels'
 import { colorsForSize } from '../../utils/colors'
+import { findUniqueSolution } from '../../utils/levelValidate'
+import { isSolutionCell } from '../../utils/placementCheck'
 import {
   autoMarkDeadCells,
   cloneBoard,
@@ -8,6 +10,7 @@ import {
   getConflicts,
   getForcedHint,
   isSolved,
+  listPlacements,
 } from '../../utils/rules'
 import { canUseAutoMarkDeadCells, isAutoMarkDeadCellsUnlocked } from '../../utils/features'
 import { loadSettings, setAutoMarkDeadCells, setColorWeakMode } from '../../utils/settings'
@@ -21,6 +24,26 @@ import {
 import type { Board, CellPos, CellState, Level } from '../../utils/types'
 
 const DBL_TAP_MS = 320
+const MAX_LIVES = 2
+
+function remainPlaceCount(board: Board, size: number): number {
+  return Math.max(0, size - listPlacements(board).length)
+}
+
+function livesTextOf(lives: number): string {
+  if (lives <= 0) return '无'
+  return '♥'.repeat(lives)
+}
+
+function overlayWrongCells(source: Board, target: Board): Board {
+  const next = cloneBoard(target)
+  for (let r = 0; r < source.length; r++) {
+    for (let c = 0; c < source[r].length; c++) {
+      if (source[r][c] === 'wrong') next[r][c] = 'wrong'
+    }
+  }
+  return next
+}
 
 interface HistoryEntry {
   board: Board
@@ -54,6 +77,10 @@ Page({
     autoMarkEnabled: false,
     autoMarkUnlocked: true,
     colorWeak: false,
+    remainPlace: 0,
+    lives: MAX_LIVES,
+    livesText: '♥♥',
+    showLives: false,
   },
 
   level: null as Level | null,
@@ -64,6 +91,8 @@ Page({
   lastTapC: -1,
   lastTapAt: 0,
   lastTapStart: 'empty' as CellState,
+  solutionCols: null as number[] | null,
+  failModalOpen: false,
 
   onLoad(query: Record<string, string | undefined>) {
     const id = query.id
@@ -109,6 +138,9 @@ Page({
     this.lastTapC = -1
     this.lastTapAt = 0
     this.lastTapStart = 'empty'
+    this.solutionCols =
+      level.kind === 'normal' ? findUniqueSolution(level.regions) : null
+    this.failModalOpen = false
     const board = createEmptyBoard(level.size)
     const tip = level.tips?.[0]
     this.setData({
@@ -124,6 +156,10 @@ Page({
       highlight: tip?.highlight ?? null,
       tipIndex: 0,
       hasHint: false,
+      remainPlace: level.size,
+      lives: MAX_LIVES,
+      livesText: livesTextOf(MAX_LIVES),
+      showLives: level.kind === 'normal',
     })
     this.refreshAssistSettings()
     wx.setNavigationBarTitle({ title: level.name })
@@ -153,6 +189,7 @@ Page({
 
     const conflicts = getConflicts(next, level.regions)
     const tip = level.tips?.[this.tipIndex]
+    const lives = Number(this.data.lives)
     this.setData({
       board: next,
       conflictMap: toConflictMap(conflicts.cells),
@@ -160,11 +197,38 @@ Page({
       tipText: tip?.text ?? '',
       highlight: tip?.highlight ?? null,
       tipIndex: this.tipIndex,
+      remainPlace: remainPlaceCount(next, level.size),
+      livesText: livesTextOf(lives),
     })
 
     if (isSolved(next, level.regions)) {
       this.onSolved()
     }
+  },
+
+  lockWrongCell(board: Board, r: number, c: number) {
+    if (!this.level || this.level.kind !== 'normal') return
+    board[r][c] = 'wrong'
+    const lives = Math.max(0, Number(this.data.lives) - 1)
+    this.setData({ lives, livesText: livesTextOf(lives) })
+    this.commitBoard(board, { skipAutoMark: true })
+    if (lives <= 0) this.onChallengeFailed()
+  },
+
+  onChallengeFailed() {
+    if (this.failModalOpen || !this.level) return
+    this.failModalOpen = true
+    const id = this.level.id
+    wx.showModal({
+      title: '挑战失败',
+      content: '错放两次，本关将重新开始。',
+      showCancel: false,
+      confirmText: '重开',
+      success: () => {
+        this.failModalOpen = false
+        this.loadLevel(id)
+      },
+    })
   },
 
   syncTutorialTipsWithBoard(board: Board) {
@@ -208,12 +272,22 @@ Page({
       (this.lastTapStart === 'empty' || this.lastTapStart === 'mark')
 
     const board = cloneBoard(this.data.board as Board)
+    if (board[r][c] === 'wrong') return
+
     if (isDouble) {
       this.lastTapAt = 0
       this.lastTapR = -1
       this.lastTapC = -1
       const next = applyCellTap(board[r][c], 'double')
       if (next === board[r][c]) return
+      if (
+        next === 'place' &&
+        level.kind === 'normal' &&
+        !isSolutionCell(this.solutionCols, r, c)
+      ) {
+        this.lockWrongCell(board, r, c)
+        return
+      }
       board[r][c] = next
       this.commitBoard(board)
       return
@@ -246,9 +320,9 @@ Page({
     if (!level || !this.paintStrokeActive) return
 
     const board = cloneBoard(this.data.board as Board)
-    // 长按涂抹：只把空格标成 ×，不覆盖已放置的咕叽
-    if (board[r][c] === 'place') return
-    if (board[r][c] === 'mark') return
+    if (board[r][c] === 'place' || board[r][c] === 'mark' || board[r][c] === 'wrong') {
+      return
+    }
     board[r][c] = 'mark'
 
     // 涂抹过程中不反复 auto（无新增 place）；结束时再统一处理
@@ -261,6 +335,7 @@ Page({
       tipText: tip?.text ?? this.data.tipText,
       highlight: level.kind === 'tutorial' ? tip?.highlight ?? null : this.data.highlight,
       tipIndex: this.tipIndex,
+      remainPlace: remainPlaceCount(board, level.size),
     })
   },
 
@@ -281,20 +356,28 @@ Page({
     const prev = this.history.pop()
     if (!prev || !this.level) return
     this.tipIndex = prev.tipIndex
-    const conflicts = getConflicts(prev.board, this.level.regions)
+    const board = overlayWrongCells(this.data.board as Board, prev.board)
+    const conflicts = getConflicts(board, this.level.regions)
     const tip = this.level.tips?.[this.tipIndex]
+    const lives = Number(this.data.lives)
     this.setData({
-      board: prev.board,
+      board,
       conflictMap: toConflictMap(conflicts.cells),
       tipIndex: this.tipIndex,
       tipText: tip?.text ?? '',
       highlight: tip?.highlight ?? null,
       hasHint: false,
+      remainPlace: remainPlaceCount(board, this.level.size),
+      livesText: livesTextOf(lives),
     })
   },
 
   onClear() {
     if (!this.level) return
+    if (this.level.kind === 'normal') {
+      this.loadLevel(this.level.id)
+      return
+    }
     this.pushHistory()
     const board = createEmptyBoard(this.level.size)
     this.tipIndex = 0
@@ -306,13 +389,14 @@ Page({
       tipText: tip?.text ?? '',
       highlight: tip?.highlight ?? null,
       hasHint: false,
+      remainPlace: this.level.size,
     })
   },
 
   onHint() {
     if (!this.level || this.level.kind === 'tutorial') return
     const pos = getForcedHint(this.data.board as Board, this.level.regions)
-    if (!pos) {
+    if (!pos || this.data.board[pos.r][pos.c] === 'wrong') {
       wx.showToast({ title: '暂无强制格，再想想', icon: 'none' })
       return
     }
