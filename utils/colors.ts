@@ -10,9 +10,11 @@ export const REGION_COLORS = [
   '#E8A0B8',
   '#C5D4E8',
   '#E8D4A8',
+  '#C8E6C0',
+  '#F3D0E8',
 ]
 
-/** Okabe–Ito 高对比色板，配合纹理使用 */
+/** Okabe–Ito 高对比色板，再补 4 色覆盖当前预期尺寸 */
 export const COLOR_WEAK_PALETTE = [
   '#E69F00',
   '#56B4E9',
@@ -22,6 +24,10 @@ export const COLOR_WEAK_PALETTE = [
   '#D55E00',
   '#CC79A7',
   '#7A7A7A',
+  '#332288',
+  '#88CCEE',
+  '#117733',
+  '#AA4499',
 ]
 
 export function colorsForSize(size: number, colorWeak = false): string[] {

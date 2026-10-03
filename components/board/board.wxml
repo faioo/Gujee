@@ -9,7 +9,7 @@
     <view class="row">
       <block wx:for="{{row}}" wx:for-item="cell" wx:for-index="c" wx:key="c">
         <view
-          class="cell {{conflictMap[r + '-' + c] ? 'conflict' : ''}} {{highlight && highlight.r === r && highlight.c === c ? 'hl' : ''}} {{colorWeak ? 'weak pattern-' + patternIds[r][c] : ''}}"
+          class="cell {{conflictMap[r + '-' + c] ? 'conflict' : ''}} {{highlight && highlight.r === r && highlight.c === c ? 'hl' : ''}} {{colorWeak ? 'weak' : ''}} {{size >= 10 ? 'dense' : ''}}"
           style="background-color: {{colors[regions[r][c]]}};"
           data-r="{{r}}"
           data-c="{{c}}"
@@ -17,6 +17,12 @@
           bindtouchstart="onTouchStart"
         >
           <text wx:if="{{colorWeak}}" class="region-id">{{regionLabels[r][c]}}</text>
+          <view wx:if="{{colorWeak}}" class="motif-layer">
+            <text class="motif">{{motifGlyphs[r][c]}}</text>
+            <text class="motif">{{motifGlyphs[r][c]}}</text>
+            <text class="motif">{{motifGlyphs[r][c]}}</text>
+            <text class="motif">{{motifGlyphs[r][c]}}</text>
+          </view>
           <text wx:if="{{cell === 'mark'}}" class="sym mark">×</text>
           <view wx:elif="{{cell === 'place'}}" class="sym place">
             <view class="bird"></view>

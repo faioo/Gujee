@@ -1,6 +1,9 @@
 /** 进入涂抹标 × 的按住时长（微信原生 longpress 为 350ms） */
 const PAINT_HOLD_MS = 180
 
+const MOTIFS = ['✿', '★', '♥', '❋', '☽', '☘', '❁', '≈', '❄', '♪', '◆', '✤']
+const MOTIF_COUNT = MOTIFS.length
+
 Component({
   properties: {
     size: { type: Number, value: 5 },
@@ -15,18 +18,22 @@ Component({
   data: {
     patternIds: [] as number[][],
     regionLabels: [] as number[][],
+    motifGlyphs: [] as string[][],
   },
 
   observers: {
     regions(regions: number[][]) {
       const rows = Array.isArray(regions) ? regions : []
       const patternIds = rows.map((row) =>
-        (row || []).map((id) => ((Number(id) % 8) + 8) % 8),
+        (row || []).map((id) => ((Number(id) % MOTIF_COUNT) + MOTIF_COUNT) % MOTIF_COUNT),
       )
       const regionLabels = rows.map((row) =>
         (row || []).map((id) => Number(id) + 1),
       )
-      this.setData({ patternIds, regionLabels })
+      const motifGlyphs = patternIds.map((row) =>
+        row.map((id) => MOTIFS[id]),
+      )
+      this.setData({ patternIds, regionLabels, motifGlyphs })
     },
   },
 

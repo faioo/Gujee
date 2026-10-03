@@ -88,94 +88,40 @@
   position: absolute;
   left: 6rpx;
   top: 2rpx;
-  font-size: 18rpx;
+  font-size: 16rpx;
   font-weight: 700;
-  color: rgba(44, 36, 27, 0.55);
+  color: rgba(44, 36, 27, 0.42);
   z-index: 0;
   line-height: 1.2;
 }
 
-.cell.weak.pattern-0 {
-  background-image: repeating-linear-gradient(
-    45deg,
-    rgba(44, 36, 27, 0.22) 0,
-    rgba(44, 36, 27, 0.22) 6rpx,
-    transparent 6rpx,
-    transparent 14rpx
-  );
+.cell.dense .region-id {
+  font-size: 12rpx;
 }
 
-.cell.weak.pattern-1 {
-  background-image: repeating-linear-gradient(
-    -45deg,
-    rgba(44, 36, 27, 0.22) 0,
-    rgba(44, 36, 27, 0.22) 6rpx,
-    transparent 6rpx,
-    transparent 14rpx
-  );
+.motif-layer {
+  position: absolute;
+  top: 8%;
+  right: 8%;
+  bottom: 8%;
+  left: 8%;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: space-around;
+  justify-content: space-around;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.22;
 }
 
-.cell.weak.pattern-2 {
-  background-image: repeating-linear-gradient(
-    0deg,
-    rgba(44, 36, 27, 0.2) 0,
-    rgba(44, 36, 27, 0.2) 5rpx,
-    transparent 5rpx,
-    transparent 12rpx
-  );
+.motif {
+  width: 50%;
+  font-size: 22rpx;
+  line-height: 1;
+  text-align: center;
+  color: #2c241b;
 }
 
-.cell.weak.pattern-3 {
-  background-image: repeating-linear-gradient(
-    90deg,
-    rgba(44, 36, 27, 0.2) 0,
-    rgba(44, 36, 27, 0.2) 5rpx,
-    transparent 5rpx,
-    transparent 12rpx
-  );
-}
-
-.cell.weak.pattern-4 {
-  background-image: radial-gradient(
-    rgba(44, 36, 27, 0.28) 22%,
-    transparent 24%
-  );
-  background-size: 16rpx 16rpx;
-}
-
-.cell.weak.pattern-5 {
-  background-image:
-    repeating-linear-gradient(
-      0deg,
-      rgba(44, 36, 27, 0.16) 0,
-      rgba(44, 36, 27, 0.16) 4rpx,
-      transparent 4rpx,
-      transparent 12rpx
-    ),
-    repeating-linear-gradient(
-      90deg,
-      rgba(44, 36, 27, 0.16) 0,
-      rgba(44, 36, 27, 0.16) 4rpx,
-      transparent 4rpx,
-      transparent 12rpx
-    );
-}
-
-.cell.weak.pattern-6 {
-  background-image: repeating-linear-gradient(
-    135deg,
-    rgba(44, 36, 27, 0.28) 0 8rpx,
-    transparent 8rpx 20rpx
-  );
-}
-
-.cell.weak.pattern-7 {
-  background-image: radial-gradient(
-    closest-side,
-    rgba(44, 36, 27, 0.3),
-    rgba(44, 36, 27, 0.3) 40%,
-    transparent 42%
-  );
-  background-size: 22rpx 22rpx;
-  background-position: 0 0, 11rpx 11rpx;
+.cell.dense .motif {
+  font-size: 14rpx;
 }
