@@ -34,5 +34,12 @@
       </view>
       <text class="lock-badge">未解锁</text>
     </view>
+    <view class="setting-row">
+      <view class="setting-copy">
+        <text class="setting-name">色弱模式</text>
+        <text class="setting-desc">用纹理和编号区分色块，不单靠颜色</text>
+      </view>
+      <switch checked="{{colorWeakMode}}" color="#e07a3d" bindchange="onColorWeakChange" />
+    </view>
   </view>
 </view>

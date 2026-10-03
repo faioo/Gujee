@@ -2,13 +2,16 @@ import { isAutoMarkDeadCellsUnlocked, canUseAutoMarkDeadCells } from '../utils/f
 import {
   loadSettings,
   setAutoMarkDeadCells,
+  setColorWeakMode,
 } from '../utils/settings'
 import { createMemoryStorage } from '../utils/storage'
 
 describe('settings', () => {
-  test('defaults autoMarkDeadCells to false', () => {
+  test('defaults autoMarkDeadCells and colorWeakMode to false', () => {
     const adapter = createMemoryStorage()
-    expect(loadSettings(adapter).autoMarkDeadCells).toBe(false)
+    const settings = loadSettings(adapter)
+    expect(settings.autoMarkDeadCells).toBe(false)
+    expect(settings.colorWeakMode).toBe(false)
   })
 
   test('setAutoMarkDeadCells persists', () => {
@@ -28,5 +31,13 @@ describe('settings', () => {
     const adapter = createMemoryStorage()
     expect(canUseAutoMarkDeadCells(adapter, false)).toBe(false)
     expect(canUseAutoMarkDeadCells(adapter, true)).toBe(true)
+  })
+
+  test('setColorWeakMode persists', () => {
+    const adapter = createMemoryStorage()
+    setColorWeakMode(adapter, true)
+    expect(loadSettings(adapter).colorWeakMode).toBe(true)
+    setColorWeakMode(adapter, false)
+    expect(loadSettings(adapter).colorWeakMode).toBe(false)
   })
 })

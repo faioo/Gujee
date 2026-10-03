@@ -9,13 +9,14 @@
     <view class="row">
       <block wx:for="{{row}}" wx:for-item="cell" wx:for-index="c" wx:key="c">
         <view
-          class="cell {{conflictMap[r + '-' + c] ? 'conflict' : ''}} {{highlight && highlight.r === r && highlight.c === c ? 'hl' : ''}}"
-          style="background: {{colors[regions[r][c]]}};"
+          class="cell {{conflictMap[r + '-' + c] ? 'conflict' : ''}} {{highlight && highlight.r === r && highlight.c === c ? 'hl' : ''}} {{colorWeak ? 'weak pattern-' + patternIds[r][c] : ''}}"
+          style="background-color: {{colors[regions[r][c]]}};"
           data-r="{{r}}"
           data-c="{{c}}"
           bindtap="onCellTap"
           bindtouchstart="onTouchStart"
         >
+          <text wx:if="{{colorWeak}}" class="region-id">{{regionLabels[r][c]}}</text>
           <text wx:if="{{cell === 'mark'}}" class="sym mark">×</text>
           <view wx:elif="{{cell === 'place'}}" class="sym place">
             <view class="bird"></view>

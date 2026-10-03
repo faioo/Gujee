@@ -38,6 +38,7 @@ export interface ProgressState {
 
 export interface GameSettings {
   autoMarkDeadCells: boolean
+  colorWeakMode: boolean
 }
 
 export interface StorageAdapter {

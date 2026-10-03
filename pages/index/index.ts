@@ -1,6 +1,10 @@
 import { getLevels } from '../../data/levels'
 import { isAutoMarkDeadCellsUnlocked } from '../../utils/features'
-import { loadSettings, setAutoMarkDeadCells } from '../../utils/settings'
+import {
+  loadSettings,
+  setAutoMarkDeadCells,
+  setColorWeakMode,
+} from '../../utils/settings'
 import { createWxStorage } from '../../utils/storage'
 import {
   getFirstTutorialId,
@@ -14,6 +18,7 @@ Page({
     brandEn: 'Goojee',
     autoMarkUnlocked: true,
     autoMarkDeadCells: false,
+    colorWeakMode: false,
   },
 
   onShow() {
@@ -34,6 +39,7 @@ Page({
     this.setData({
       autoMarkUnlocked: isAutoMarkDeadCellsUnlocked(adapter),
       autoMarkDeadCells: settings.autoMarkDeadCells,
+      colorWeakMode: settings.colorWeakMode,
     })
   },
 
@@ -43,6 +49,12 @@ Page({
     const enabled = Boolean((e.detail as { value?: boolean }).value)
     setAutoMarkDeadCells(adapter, enabled)
     this.setData({ autoMarkDeadCells: enabled })
+  },
+
+  onColorWeakChange(e: WechatMiniprogram.TouchEvent) {
+    const enabled = Boolean((e.detail as { value?: boolean }).value)
+    setColorWeakMode(createWxStorage(), enabled)
+    this.setData({ colorWeakMode: enabled })
   },
 
   goLevels() {

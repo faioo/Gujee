@@ -1,4 +1,4 @@
-/** 色盲友好：鲜明底色 + 棋盘边框辅助区分区域 */
+/** 默认分区色：鲜明底色 + 棋盘边框辅助区分区域 */
 export const REGION_COLORS = [
   '#F6B6C3',
   '#A8D5E5',
@@ -12,10 +12,23 @@ export const REGION_COLORS = [
   '#E8D4A8',
 ]
 
-export function colorsForSize(size: number): string[] {
+/** Okabe–Ito 高对比色板，配合纹理使用 */
+export const COLOR_WEAK_PALETTE = [
+  '#E69F00',
+  '#56B4E9',
+  '#009E73',
+  '#F0E442',
+  '#0072B2',
+  '#D55E00',
+  '#CC79A7',
+  '#7A7A7A',
+]
+
+export function colorsForSize(size: number, colorWeak = false): string[] {
+  const palette = colorWeak ? COLOR_WEAK_PALETTE : REGION_COLORS
   const list: string[] = []
   for (let i = 0; i < size; i++) {
-    list.push(REGION_COLORS[i % REGION_COLORS.length])
+    list.push(palette[i % palette.length])
   }
   return list
 }

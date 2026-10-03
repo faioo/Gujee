@@ -4,6 +4,7 @@ export const SETTINGS_KEY = 'goojee_settings_v1'
 
 const DEFAULT_SETTINGS: GameSettings = {
   autoMarkDeadCells: false,
+  colorWeakMode: false,
 }
 
 export function defaultSettings(): GameSettings {
@@ -17,6 +18,7 @@ function parseSettings(raw: string | null): GameSettings {
     const data = JSON.parse(raw) as Partial<GameSettings>
     return {
       autoMarkDeadCells: Boolean(data.autoMarkDeadCells),
+      colorWeakMode: Boolean(data.colorWeakMode),
     }
   } catch {
     return base
@@ -37,6 +39,16 @@ export function setAutoMarkDeadCells(
 ): GameSettings {
   const settings = loadSettings(adapter)
   settings.autoMarkDeadCells = enabled
+  saveSettings(adapter, settings)
+  return settings
+}
+
+export function setColorWeakMode(
+  adapter: StorageAdapter,
+  enabled: boolean,
+): GameSettings {
+  const settings = loadSettings(adapter)
+  settings.colorWeakMode = enabled
   saveSettings(adapter, settings)
   return settings
 }

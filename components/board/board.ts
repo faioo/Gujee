@@ -9,6 +9,25 @@ Component({
     conflictMap: { type: Object, value: {} },
     highlight: { type: Object, value: {} },
     colors: { type: Array, value: [] },
+    colorWeak: { type: Boolean, value: false },
+  },
+
+  data: {
+    patternIds: [] as number[][],
+    regionLabels: [] as number[][],
+  },
+
+  observers: {
+    regions(regions: number[][]) {
+      const rows = Array.isArray(regions) ? regions : []
+      const patternIds = rows.map((row) =>
+        (row || []).map((id) => ((Number(id) % 8) + 8) % 8),
+      )
+      const regionLabels = rows.map((row) =>
+        (row || []).map((id) => Number(id) + 1),
+      )
+      this.setData({ patternIds, regionLabels })
+    },
   },
 
   lifetimes: {

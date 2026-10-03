@@ -49,6 +49,7 @@ Page({
     tipIndex: 0,
     hasHint: false,
     autoMarkEnabled: false,
+    colorWeak: false,
   },
 
   level: null as Level | null,
@@ -76,7 +77,13 @@ Page({
       adapter,
       settings.autoMarkDeadCells,
     )
-    this.setData({ autoMarkEnabled })
+    const colorWeak = Boolean(settings.colorWeakMode)
+    const size = Number(this.data.size) || 0
+    this.setData({
+      autoMarkEnabled,
+      colorWeak,
+      colors: size > 0 ? colorsForSize(size, colorWeak) : this.data.colors,
+    })
   },
 
   loadLevel(id: string) {
@@ -98,7 +105,7 @@ Page({
       size: level.size,
       regions: level.regions,
       board,
-      colors: colorsForSize(level.size),
+      colors: colorsForSize(level.size, Boolean(this.data.colorWeak)),
       conflictMap: {},
       tipText: tip?.text ?? '',
       highlight: tip?.highlight ?? null,
