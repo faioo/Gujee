@@ -1,0 +1,29 @@
+scripts/validate_region_map.py
+  s_98724012f4855b::t_dfb286ff04f339 1-155,161-167,175-186
+  s_98724012f4855b::t_09b0acf20ffe4e 156-160,168-174
+scripts/run_and_validate.ps1
+  s_98724012f4855b::t_0f7205554ce3bb 25,27-36,38-50,52-66,68-69
+  s_98724012f4855b::t_2b28dd01605663 1-17,21-23,26,37,51,67,70
+  s_98724012f4855b::t_faa3df78841426 18-20,24
+scripts/generate_region_map.py
+  s_98724012f4855b::t_0ee768dae56e70 1-423
+scripts/run_and_validate.sh
+  s_98724012f4855b::t_3497927ce9de35 58
+  s_98724012f4855b::t_7aabc07edbd296 1-57
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "f5240b46d0d8579042f74d0182648d91a1c95420",
+  "prompts": {},
+  "sessions": {
+    "s_98724012f4855b": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "05bd3cec-0f6a-43d4-9463-233feb5326ca",
+        "model": "auto-smart"
+      },
+      "human_author": "Hui Zhang <Hui.Zhang@myob.com>"
+    }
+  }
+}
